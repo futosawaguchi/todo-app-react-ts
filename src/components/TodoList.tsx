@@ -1,11 +1,12 @@
+import type { Todo } from '../App'
 import TodoItem from './TodoItem'
 
 // Todoの型定義（App.tsxと同じもの）
-interface Todo {
-  id: number
-  text: string
-  done: boolean
-}
+// interface Todo {
+//   id: number
+//   text: string
+//   done: boolean
+// }
 
 // 受け取るpropsの型定義
 interface TodoListProps {
