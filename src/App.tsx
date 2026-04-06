@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
 
@@ -8,8 +8,10 @@ export interface Todo {
   done: boolean
 }
 
+// フィルターの型定義
+type FilterType = 'all' | 'active' | 'done'
+
 function App() {
-  // localStorageから初期値を読み込む
   const [todos, setTodos] = useState<Todo[]>(() => {
     const saved = localStorage.getItem('todos')
     if (saved) {
@@ -18,12 +20,19 @@ function App() {
     return []
   })
   const [input, setInput] = useState<string>('')
+  const [filter, setFilter] = useState<FilterType>('all')
 
-
-  // todosが変わるたびにlocalStorageに保存する
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos))
   }, [todos])
+
+  // フィルタリングされたタスク一覧
+  const filteredTodos = useMemo(() => {
+    if (filter === 'all') return todos
+    if (filter === 'active') return todos.filter((t) => !t.done)
+    if (filter === 'done') return todos.filter((t) => t.done)
+    return todos
+  }, [todos, filter])
 
   const addTodo = () => {
     if (input.trim() === '') return
@@ -57,8 +66,31 @@ function App() {
         onInputChange={setInput}
         onAddTodo={addTodo}
       />
+
+      {/* フィルターボタン */}
+      <div>
+        <button
+          onClick={() => setFilter('all')}
+          style={{ fontWeight: filter === 'all' ? 'bold' : 'normal' }}
+        >
+          すべて
+        </button>
+        <button
+          onClick={() => setFilter('active')}
+          style={{ fontWeight: filter === 'active' ? 'bold' : 'normal' }}
+        >
+          未完了
+        </button>
+        <button
+          onClick={() => setFilter('done')}
+          style={{ fontWeight: filter === 'done' ? 'bold' : 'normal' }}
+        >
+          完了済み
+        </button>
+      </div>
+
       <TodoList
-        todos={todos}
+        todos={filteredTodos}
         onToggle={toggleTodo}
         onDelete={deleteTodo}
       />
