@@ -1,27 +1,30 @@
-// 受け取るpropsの型定義
 interface TodoInputProps {
   input: string
-  onInputChange: (value: string) => void  // 入力欄の変更関数
-  onAddTodo: () => void                   // タスク追加関数
+  onInputChange: (value: string) => void
+  onAddTodo: () => void
 }
 
 function TodoInput({ input, onInputChange, onAddTodo }: TodoInputProps) {
-
-  // Enterキーでも追加できるようにする
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') onAddTodo()
   }
 
   return (
-    <div>
+    <div className="flex gap-2">
       <input
         type="text"
         value={input}
         onChange={(e) => onInputChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="タスクを入力..."
+        className="flex-1 px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all placeholder-gray-300"
       />
-      <button onClick={onAddTodo}>追加</button>
+      <button
+        onClick={onAddTodo}
+        className="px-5 py-3 bg-violet-500 text-white rounded-xl font-medium hover:bg-violet-600 transition-colors cursor-pointer"
+      >
+        追加
+      </button>
     </div>
   )
 }

@@ -8,7 +8,6 @@ export interface Todo {
   done: boolean
 }
 
-// フィルターの型定義
 type FilterType = 'all' | 'active' | 'done'
 
 function App() {
@@ -26,7 +25,6 @@ function App() {
     localStorage.setItem('todos', JSON.stringify(todos))
   }, [todos])
 
-  // フィルタリングされたタスク一覧
   const filteredTodos = useMemo(() => {
     if (filter === 'all') return todos
     if (filter === 'active') return todos.filter((t) => !t.done)
@@ -36,7 +34,6 @@ function App() {
 
   const addTodo = () => {
     if (input.trim() === '') return
-
     const newTodo: Todo = {
       id: Date.now(),
       text: input,
@@ -58,42 +55,61 @@ function App() {
     setTodos(todos.filter((todo) => todo.id !== id))
   }
 
+  const filters: { label: string; value: FilterType }[] = [
+    { label: 'すべて', value: 'all' },
+    { label: '未完了', value: 'active' },
+    { label: '完了済み', value: 'done' },
+  ]
+
   return (
-    <div>
-      <h1>Todoアプリ</h1>
-      <TodoInput
-        input={input}
-        onInputChange={setInput}
-        onAddTodo={addTodo}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-blue-50 py-12 px-4">
+      <div className="max-w-lg mx-auto">
 
-      {/* フィルターボタン */}
-      <div>
-        <button
-          onClick={() => setFilter('all')}
-          style={{ fontWeight: filter === 'all' ? 'bold' : 'normal' }}
-        >
-          すべて
-        </button>
-        <button
-          onClick={() => setFilter('active')}
-          style={{ fontWeight: filter === 'active' ? 'bold' : 'normal' }}
-        >
-          未完了
-        </button>
-        <button
-          onClick={() => setFilter('done')}
-          style={{ fontWeight: filter === 'done' ? 'bold' : 'normal' }}
-        >
-          完了済み
-        </button>
+        {/* タイトル */}
+        <h1 className="text-4xl font-bold text-center text-violet-600 mb-8">
+          Todo App
+        </h1>
+
+        {/* カード */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+
+          {/* 入力欄 */}
+          <TodoInput
+            input={input}
+            onInputChange={setInput}
+            onAddTodo={addTodo}
+          />
+
+          {/* フィルターボタン */}
+          <div className="flex gap-2 mt-6 mb-4">
+            {filters.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setFilter(f.value)}
+                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer
+                  ${filter === f.value
+                    ? 'bg-violet-500 text-white'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {/* タスク一覧 */}
+          <TodoList
+            todos={filteredTodos}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+          />
+
+          {/* タスク数の表示 */}
+          <p className="text-sm text-gray-400 text-right mt-4">
+            {todos.filter((t) => !t.done).length} 件の未完了タスク
+          </p>
+        </div>
       </div>
-
-      <TodoList
-        todos={filteredTodos}
-        onToggle={toggleTodo}
-        onDelete={deleteTodo}
-      />
     </div>
   )
 }

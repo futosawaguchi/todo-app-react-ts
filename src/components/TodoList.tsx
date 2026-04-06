@@ -1,14 +1,6 @@
 import type { Todo } from '../App'
 import TodoItem from './TodoItem'
 
-// Todoの型定義（App.tsxと同じもの）
-// interface Todo {
-//   id: number
-//   text: string
-//   done: boolean
-// }
-
-// 受け取るpropsの型定義
 interface TodoListProps {
   todos: Todo[]
   onToggle: (id: number) => void
@@ -18,16 +10,20 @@ interface TodoListProps {
 function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
   return (
     <ul>
-      {todos.map((todo) => (
-        <TodoItem
-          key={todo.id}
-          id={todo.id}
-          text={todo.text}
-          done={todo.done}
-          onToggle={onToggle}
-          onDelete={onDelete}
-        />
-      ))}
+      {todos.length === 0 ? (
+        <p className="text-center text-gray-300 py-8">タスクがありません</p>
+      ) : (
+        todos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            id={todo.id}
+            text={todo.text}
+            done={todo.done}
+            onToggle={onToggle}
+            onDelete={onDelete}
+          />
+        ))
+      )}
     </ul>
   )
 }
