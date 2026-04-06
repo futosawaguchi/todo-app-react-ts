@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
 
-// Todo型をここで定義してexportする（各コンポーネントから使えるようにする）
 export interface Todo {
   id: number
   text: string
@@ -10,8 +9,21 @@ export interface Todo {
 }
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
+  // localStorageから初期値を読み込む
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    const saved = localStorage.getItem('todos')
+    if (saved) {
+      return JSON.parse(saved)
+    }
+    return []
+  })
   const [input, setInput] = useState<string>('')
+
+
+  // todosが変わるたびにlocalStorageに保存する
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+  }, [todos])
 
   const addTodo = () => {
     if (input.trim() === '') return
